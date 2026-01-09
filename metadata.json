@@ -1,0 +1,5 @@
+{
+  "name": "Calculadora Finanzas",
+  "description": "A specialized financial calculator for donation management with dynamic Gomer threshold logic.",
+  "requestFramePermissions": []
+}
