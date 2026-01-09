@@ -24,8 +24,18 @@ const App: React.FC = () => {
     const defaultConfig: GomerConfig = { 
         monthlyThreshold: 5000,
         customCategories: [],
+        
+        // New Defaults
+        titheLabel: 'Diezmo',
+        titheAcronym: 'D',
+        offeringLabel: 'Ofrenda',
+        offeringAcronym: 'O',
+        calculationMode: 'sundays',
+
         directionTithePercentage: 10,
-        enableGomerLogic: true
+        enableGomerLogic: true,
+        showLocalAvailable: false,
+        showTotalIncome: true
     };
     return saved ? { ...defaultConfig, ...JSON.parse(saved) } : defaultConfig;
   });
@@ -38,15 +48,22 @@ const App: React.FC = () => {
     localStorage.setItem('gomer_config', JSON.stringify(config));
   }, [config]);
 
-  const handleSaveTransaction = (amount: number, type: TransactionType, categoryName?: string) => {
+  // Updated to accept customDate
+  const handleSaveTransaction = (amount: number, type: TransactionType, categoryName?: string, customDate?: string) => {
     const newTransaction: Transaction = {
       id: generateId(),
       amount,
       type,
       categoryName,
-      date: new Date().toISOString()
+      date: customDate || new Date().toISOString()
     };
     setTransactions(prev => [...prev, newTransaction]);
+  };
+
+  const handleDeleteTransaction = (id: string) => {
+    if (window.confirm("¿Estás seguro de que deseas eliminar este registro?")) {
+      setTransactions(prev => prev.filter(t => t.id !== id));
+    }
   };
 
   const handleAddCategory = (name: string) => {
@@ -102,12 +119,16 @@ const App: React.FC = () => {
         {view === View.CALCULATOR && (
           <Calculator 
             onSave={handleSaveTransaction} 
-            customCategories={config.customCategories}
+            config={config}
             onAddCategory={handleAddCategory}
           />
         )}
         {view === View.REPORT && (
-          <Dashboard transactions={transactions} config={config} />
+          <Dashboard 
+            transactions={transactions} 
+            config={config} 
+            onDelete={handleDeleteTransaction}
+          />
         )}
         {view === View.SETTINGS && (
           <Settings 

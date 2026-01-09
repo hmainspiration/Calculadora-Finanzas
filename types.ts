@@ -18,12 +18,26 @@ export interface CustomCategory {
   name: string;
 }
 
+export type CalculationMode = 'sundays' | 'weeks' | 'days';
+
 export interface GomerConfig {
   monthlyThreshold: number;
   customCategories: CustomCategory[];
-  // Advanced Settings
+  
+  // Visual & Labels (New)
+  titheLabel: string;
+  titheAcronym: string;
+  offeringLabel: string;
+  offeringAcronym: string;
+  
+  // Logic Settings
+  calculationMode: CalculationMode; // Default 'sundays'
   directionTithePercentage: number; // Default 10
   enableGomerLogic: boolean; // Toggle for the complex remnant logic
+  
+  // Visibility Settings
+  showLocalAvailable: boolean; // Default false
+  showTotalIncome: boolean; // Default true
 }
 
 export interface FinancialReport {
@@ -34,9 +48,9 @@ export interface FinancialReport {
   totalOfferings: number;
   totalOthers: number;
   directionTithe: number;
-  available: number;
-  ministerAmount: number;
-  remnant: number;
+  available: number; // Total available (Net Base + Others)
+  ministerAmount: number; // Strictly from Net Base (D+O - 10%)
+  remnant: number; // Strictly from Net Base (D+O - 10%)
   isGoalMet: boolean;
   byCategory: Record<string, number>;
 }
